@@ -3,7 +3,7 @@ use kalosm::language::{Llama, LlamaSource};
 
 async fn build_model() -> Llama {
     Llama::builder()
-        .with_source(LlamaSource::llama_3_2_1b_chat())
+        .with_source(LlamaSource::llama_3_2_3b_chat())
         .build()
         .await
         .unwrap()
