@@ -1,0 +1,22 @@
+[package]
+name = "cache_chatbot"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "cache_chatbot"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bin"
+path = "src/main.rs"
+
+[dependencies]
+kalosm = { version = "0.4.0", features = ["language", "llama"] }
+rocket = {  version = "0.5.1", features = ["json"] }
+rocket_cors = "0.6.0"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1"
+file_chatbot = { path = "../file_chatbot" }
+fix = { path = "../fix" }
+lru = "0.16.3"

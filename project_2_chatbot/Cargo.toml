@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "fix",
+    "basic_chatbot",
+    "file_chatbot",
+    "cache_chatbot",
+    "experiments",
+]
+
+[profile.test]
+inherits = "release"
