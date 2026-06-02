@@ -1,0 +1,17 @@
+[package]
+name = "kth_largest_element"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "sol1"
+path = "src/sol1.rs"
+
+
+[[bin]]
+name = "sol2"
+path = "src/sol2.rs"
+
+[dependencies]
+rand = "0.8"
+
