@@ -1,0 +1,24 @@
+[package]
+name = "linked_list"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "linked_list"
+path = "src/lib.rs"
+
+[[bin]]
+name = "simple_main"
+path = "src/simple_main.rs"
+
+[[bin]]
+name = "remove_main"
+path = "src/remove_main.rs"
+
+[[bin]]
+name = "drop_main"
+path = "src/drop_main.rs"
+
+[dependencies]
+malloc = { path = "../project_3_vec/malloc" }
+tracker = { path = "../project_3_vec/tracker" }
