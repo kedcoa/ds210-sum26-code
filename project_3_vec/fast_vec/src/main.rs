@@ -1,6 +1,6 @@
 use malloc::MALLOC;
 use fast_vec::FastVec;
-use std::ptr;
+use std::{io::ErrorKind::QuotaExceeded, ptr};
 
 // This is a scratch pad for you.
 // Feel free to use it to try the different APIs and see if they work.
@@ -21,9 +21,10 @@ fn malloc_and_ptr() {
         println!("address of pointer is {ptr1:p}");
     }
 
-    // Malloc many values.
+    // Malloc 5 elements
     println!("malloc_and_ptr------");
     let ptr2 = unsafe { MALLOC.malloc(5 * size_of::<i32>()) as *mut i32 };
+    //this code is for actually writing in the values
     for i in 0..5 {
         unsafe {
             ptr::write(ptr2.add(i), 10 * (i as i32));
@@ -32,8 +33,8 @@ fn malloc_and_ptr() {
 
     for i in 0..5 {
         unsafe {
-            let tmp = ptr2.add(i);
-            let value = *tmp;
+            let tmp = ptr2.add(i); //temporary pointer for index location
+            let value = *tmp; //dereference to equal value at temp pointer
             println!("value at index {i} is {value}");
             println!("address of index {i} is {tmp:p}");
         }

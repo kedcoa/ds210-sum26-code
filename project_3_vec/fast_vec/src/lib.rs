@@ -10,10 +10,11 @@ pub struct FastVec<T> {
 impl<T> FastVec<T> {
     // Creating a new FastVec that is either empty or has capacity for some future elements.
     pub fn new() -> FastVec<T> {
-        return FastVec::with_capacity(1);
+        return FastVec::with_capacity(1); //will start with capacity 1 already
     }
     pub fn with_capacity(capacity: usize) -> FastVec<T> {
         let ptr = unsafe { MALLOC.malloc(size_of::<T>() * capacity) as *mut T };
+        //size of space allocated on heap is size of new element * capacity you want 
         return FastVec {
             ptr_to_data: ptr,
             len: 0,
@@ -29,7 +30,7 @@ impl<T> FastVec<T> {
         return self.capacity;
     }
 
-    // Transforms an instance of SlowVec to a regular vector.
+    // Transforms an instance of FastVec to a regular vector.
     pub fn into_vec(mut self) -> Vec<T> {
         let mut v = Vec::with_capacity(self.len);
         for i in 0..self.len {
@@ -46,7 +47,7 @@ impl<T> FastVec<T> {
         return v;
     }
 
-    // Transforms a vector to a SlowVec.
+    // Transforms a vector to a FastVec.
     pub fn from_vec(vec: Vec<T>) -> FastVec<T> {
         let mut fast_vec: FastVec<T> = FastVec::with_capacity(vec.len());
         for element in vec {
@@ -59,28 +60,72 @@ impl<T> FastVec<T> {
         return fast_vec;
     }
 
-    // Use the project handout as a guide for this part!
     pub fn get(&self, i: usize) -> &T {
-        todo!("implement get!");
-    }
-
-    pub fn push(&mut self, t: T) {
-        if self.len == self.capacity {
-            todo!("implement growing the vector by doubling the size!");
+        if i>= self.len() {
+            panic!("FastVec: get out of bounds");
         } else {
-            todo!("implement pushing t directly since the vector still has capacity!");
+            unsafe {
+                let value = &*self.ptr_to_data.add(i); //dereferences pointer to value
+                return value;  
+            } //can't use read b/c you want to reference the value not move it 
         }
     }
 
+    pub fn push(&mut self, t: T) {
+        if self.len == self.capacity { 
+            let new_cap = self.capacity *2 ; //double the current capacity
+            let new_ptr = unsafe { MALLOC.malloc(size_of::<T>()*new_cap) as *mut T }; 
+            
+            //move all elements into new_cap; 
+            for i in 0..self.len() {
+                unsafe {
+                    //first move values out from old fastvec  
+                    let value = ptr::read(self.ptr_to_data.add(i)); //read value b/c moving it
+                    //then write values into new fastvec
+                    ptr::write(new_ptr.add(i),value); 
+                }
+            }
+            //free the old fastvec space 
+            unsafe {MALLOC.free(self.ptr_to_data as *mut u8); }
+            //update self.ptr to become new_ptr
+            self.ptr_to_data = new_ptr; 
+            //update the capacity
+            self.capacity = new_cap;
+        } //now it has cap, push the value directly
+        unsafe {
+            ptr::write(self.ptr_to_data.add(self.len), t); 
+        }
+        self.len += 1; //always manually update len
+    }
+
     pub fn remove(&mut self, i: usize) {
-        todo!("implement remove");
+        if i >= self.len {
+            panic!("FastVec: remove out of bounds!"); 
+        }
+        unsafe {
+            //move out the element at index
+            ptr::read(self.ptr_to_data.add(i));
+            //shift all elements after index value to fill in gap
+            for j in (i+1)..self.len {
+                let value = ptr::read(self.ptr_to_data.add(j));
+                ptr::write(self.ptr_to_data.add(j-1), value);
+            }
+        }
+        self.len -= 1; //manually update the length
     }
 
     // This appears correct but with further testing, you will notice it has a bug!
     // Hint: check out case 2 in memory.rs, which you can run using
     //       cargo run --bin memory
     pub fn clear(&mut self) {
-        unsafe { MALLOC.free(self.ptr_to_data as *mut u8); }
+        //have to read (move) the values out first
+        unsafe { 
+            for i in 0..self.len {
+                ptr::read(self.ptr_to_data.add(i));
+            }
+        //and then you can free the empty fastvec
+            MALLOC.free(self.ptr_to_data as *mut u8);
+        }
         self.ptr_to_data = null_mut();
         self.len = 0;
         self.capacity = 0;

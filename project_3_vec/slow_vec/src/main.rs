@@ -13,15 +13,19 @@ fn fixed_sized_array() {
     array.put(20, 1);
     println!("{array}");  // You can print a FixedSizeArray directly!
 
-    // We can call get many times.
+    // We can call get many times b/c it's a reference!
     println!("{}", array.get(0));
     println!("{}", array.get(0));
 
-    // Can we call move many times? try it out and see for yourself.
-    println!("{}", array.move_out(0));
-    // println!("{}", array.move_out(0));
-
+    //Cannot call move many times b/c it removes element out of array!
+    println!("{}", array.move_out(0)); 
+    println!("{}", array.move_out(1)); 
+    array.put(30, 0);
+    println!("{array}"); //outputs Fixed[30, %
+   
     // Try other things!
+    //println!("{}", array.get(0));
+    //array.put(30,2); says index is out of bounds
     // What happens if you try to put or get things out of the range?
     // What happens if you try to get or move_out before put?
     // What if you try to get something you had move_out before?
