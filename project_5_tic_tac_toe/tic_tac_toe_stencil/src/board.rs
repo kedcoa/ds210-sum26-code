@@ -43,10 +43,10 @@ impl Board {
     // Return all legal moves available on this board.
     pub fn moves(&self) -> Vec<(usize, usize)> {
         let mut moves = vec![];
-        for i in 0..self.cells.len() {
-            for j in 0..self.cells.len() {
+        for i in 0..self.cells.len() { //for rows
+            for j in 0..self.cells.len() { //for columns
                 if let Cell::Empty = self.cells[i][j] {
-                    moves.push((i, j));
+                    moves.push((i, j)); //basically gives location of empty cells 
                 }
             }
         }
@@ -56,10 +56,10 @@ impl Board {
     // Check if the game is over.
     pub fn game_over(&self) -> bool {
         // 3x3 board ends as soon as someone gets a 3 in a row.
-        if self.moves().len() == 0 {
+        if self.moves().len() == 0 { //if there's no more possible moves > game over
             return true;
         }
-        if self.cells.len() == 3 {
+        if self.cells.len() == 3 {  
             return self.score() != 0;
         }
         return false;
@@ -144,7 +144,7 @@ impl Board {
     pub fn apply_move(&mut self, m: (usize, usize), player: Player) {
         if let Cell::Empty = self.cells[m.0][m.1] {
             match player {
-                Player::X => self.cells[m.0][m.1] = Cell::X,
+                Player::X => self.cells[m.0][m.1] = Cell::X, //cells[first index of m, second index of m] becomes x 
                 Player::O => self.cells[m.0][m.1] = Cell::O,
             };
         } else {
